@@ -4,9 +4,9 @@ from PIL import Image
 import numpy as np
 
 # Кэшируем загрузку модели, чтобы избежать повторной загрузки
-@st.cache_resource
+@st.cache(allow_output_mutation=True)
 def load_model_cached():
-    return load_model('./model.keras')
+    return load_model('my_model.keras')
 
 model = load_model_cached()
 
@@ -29,12 +29,7 @@ if uploaded_file is not None:
     st.write("")
     st.write("Classifying...")
     
-    # Кэшируем предсказания, чтобы избежать повторных вычислений
-    @st.cache_data
-    def get_predictions(image):
-        return predict_image(image)
-    
-    predictions = get_predictions(image)
+    predictions = predict_image(image)
     
     class_names = ['AI', 'Human']  # Замените на имена ваших классов
     predicted_class = class_names[np.argmax(predictions)]
