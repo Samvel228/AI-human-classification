@@ -6,7 +6,7 @@ import numpy as np
 # Кэшируем загрузку модели, чтобы избежать повторной загрузки
 @st.cache(allow_output_mutation=True)
 def load_model_cached():
-    return load_model('my_model.keras')
+    return load_model('model.keras')
 
 model = load_model_cached()
 
