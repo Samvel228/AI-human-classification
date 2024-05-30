@@ -3,8 +3,12 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 import numpy as np
 
-# Загрузка модели
-model = load_model('./model.keras')
+# Кэшируем загрузку модели, чтобы избежать повторной загрузки
+@st.cache_resource
+def load_model_cached():
+    return load_model('./model.keras')
+
+model = load_model_cached()
 
 # Функция для предсказания класса изображения
 def predict_image(img):
@@ -24,9 +28,15 @@ if uploaded_file is not None:
     st.image(image, caption='Uploaded Image.', use_column_width=True)
     st.write("")
     st.write("Classifying...")
-    predictions = predict_image(image)
+    
+    # Кэшируем предсказания, чтобы избежать повторных вычислений
+    @st.cache_data
+    def get_predictions(image):
+        return predict_image(image)
+    
+    predictions = get_predictions(image)
+    
     class_names = ['AI', 'Human']  # Замените на имена ваших классов
     predicted_class = class_names[np.argmax(predictions)]
     st.write(f"Predicted class: {predicted_class}")
     st.write(f"Prediction probabilities: {predictions}")
-
